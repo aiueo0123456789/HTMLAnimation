@@ -1,0 +1,23 @@
+.HTMLAnimation-value {
+    display: none;
+}
+
+.HTMLAnimation-meter {
+    /* min-width: min-content; */
+    /* min-height: min-content; */
+    position: relative;
+}
+
+.HTMLAnimation-meter svg {
+    transform: rotate(-90deg); /* 上から開始させる */
+}
+.HTMLAnimation-meter svg .progress {
+    stroke-linecap: round; /* 先を丸くする */
+}
+.percentage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+}
