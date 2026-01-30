@@ -58,42 +58,41 @@ function update() {
     const targetValueElements = document.getElementsByClassName("HTMLAnimation-value");
     const targetViewElements = document.getElementsByClassName("HTMLAnimation-view");
     const targetMeterElements = document.getElementsByClassName("HTMLAnimation-meter");
-    const valueMap = new Map();
-    const maxValueMap = new Map();
+    const valuesMap = new Map();
     for (const element of targetValueElements) {
         if (element instanceof HTMLInputElement) {
-            if (element.type == "text") valueMap.set(getValueName(element.className), element.value);
-            if (element.type == "number") valueMap.set(getValueName(element.className), Number(element.value));
+            if (element.type == "number") valuesMap.set(getValueName(element.className), {value: Number(element.value), max: Number(element.max), min: Number(element.min)});
         }
     }
 
     for (const element of targetViewElements) {
-        const value = valueMap.get(getValueName(element.className));
+        const value = valuesMap.get(getValueName(element.className));
         let animationSpeed = getAnimationSpeed(element.className);
         if (!animationSpeed) animationSpeed = 0.2;
         let animationMaxSpeed = getAnimationMaxSpeed(element.className);
         if (!animationMaxSpeed) animationMaxSpeed = 0.5;
-        if (!("value" in element.dataset)) element.dataset.value = 0;
+        if (!("value" in element.dataset)) element.dataset.value = value.min;
         const nowValue = Number(element.dataset.value);
-        if (value - nowValue < 0.00001) {
-            element.dataset.value = value;
+        if (value.value - nowValue < 0.00001) {
+            element.dataset.value = value.value;
         } else {
-            element.dataset.value = Math.min(animationMaxSpeed, (value - nowValue) * animationSpeed) + nowValue;
+            element.dataset.value = Math.min(animationMaxSpeed, (value.value - nowValue) * animationSpeed) + nowValue;
         }
         element.textContent = financial(element.dataset.value, 0);
     }
 
     for (const element of targetMeterElements) {
         if (element instanceof HTMLDivElement) {
-            const value = valueMap.get(getValueName(element.className));
+            const value = valuesMap.get(getValueName(element.className));
             let animationSpeed = getAnimationSpeed(element.className);
             if (!animationSpeed) animationSpeed = 0.2;
             let animationMaxSpeed = getAnimationMaxSpeed(element.className);
             if (!animationMaxSpeed) animationMaxSpeed = 0.5;
             // let maxValue = getMaxValue(element.className);
-            const maxValue = 10;
+            const maxValue = value.max;
+            const minValue = value.min;
 
-            const radius = 200;
+            const radius = 70;
             const strokeWidth = 30;
             if (!("value" in element.dataset)) {
                 element.dataset.value = 0;
@@ -119,12 +118,12 @@ function update() {
                 element.append(svg);
             }
             const nowValue = Number(element.dataset.value);
-            if (value - nowValue < 0.00001) {
-                element.dataset.value = value;
+            if (value.value - nowValue < 0.00001) {
+                element.dataset.value = value.value;
             } else {
-                element.dataset.value = Math.min(animationMaxSpeed, (value - nowValue) * animationSpeed) + nowValue;
+                element.dataset.value = Math.min(animationMaxSpeed, (value.value - nowValue) * animationSpeed) + nowValue;
             }
-            const percent = Number(element.dataset.value) * (1 / maxValue);
+            const percent = (Number(element.dataset.value) - minValue) / (maxValue - minValue);
             const circumference = 2 * Math.PI * radius;
 
             const offset = circumference * (1 - percent);
