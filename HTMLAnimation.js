@@ -93,7 +93,7 @@ function update() {
             // let maxValue = getMaxValue(element.className);
             const maxValue = 10;
 
-            const radius = 100;
+            const radius = 200;
             const strokeWidth = 30;
             if (!("value" in element.dataset)) {
                 element.dataset.value = 0;
